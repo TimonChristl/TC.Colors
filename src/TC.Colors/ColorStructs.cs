@@ -68,25 +68,28 @@ namespace TC.Colors
             var m = Min(R, Min(G, B));
             var C = M - m;
 
-            int H_prime;
+            double H_prime;
             if(C == 0)
-                H_prime = 0;
+                H_prime = 0.0;
             else if(M == R)
-                H_prime = ((G - B) / C) % 6;
+                H_prime = ((G - B) / (double)C + 6) % 6;
             else if(M == G)
-                H_prime = (B - R) / C + 2;
+                H_prime = (B - R) / (double)C + 2;
             else if(M == B)
-                H_prime = (R - G) / C + 4;
+                H_prime = (R - G) / (double)C + 4;
             else
                 H_prime = 0;
 
             var H = (ushort)(60 * H_prime);
 
-            var L = (byte)((M + m) / 2);
+            var mPlusM = M + m;
 
-            var S_hsl = L == 0 || L == 255
+            var L = (byte)(mPlusM / 2);
+
+            var divisor = (255 - Abs(mPlusM - 255));
+            var S_hsl = divisor == 0
                 ? 0
-                : C / (255 - Abs(2 * L - 255));
+                : C * 255 / divisor;
 
             return new HSL(H, (byte)S_hsl, L);
         }
@@ -97,15 +100,15 @@ namespace TC.Colors
             var m = Min(R, Min(G, B));
             var C = M - m;
 
-            int H_prime;
+            double H_prime;
             if(C == 0)
-                H_prime = 0;
+                H_prime = 0.0;
             else if(M == R)
-                H_prime = ((G - B) / C) % 6;
+                H_prime = ((G - B) / (double)C + 6) % 6;
             else if(M == G)
-                H_prime = (B - R) / C + 2;
+                H_prime = (B - R) / (double)C + 2;
             else if(M == B)
-                H_prime = (R - G) / C + 4;
+                H_prime = (R - G) / (double)C + 4;
             else
                 H_prime = 0;
 
@@ -114,10 +117,10 @@ namespace TC.Colors
             var V = M;
 
             var S_hsv = V == 0
-                ? 0
-                : C / V;
+                ? (byte)0
+                : (byte)(C * 255 / V);
 
-            return new HSV(H, (byte)S_hsv, V);
+            return new HSV(H, S_hsv, V);
         }
 
     }
@@ -267,7 +270,7 @@ namespace TC.Colors
 
         public RGB ToRGB()
         {
-            var C = V * S;
+            var C = V * S / 255;
             var H_prime = H / 60.0;
             var X = C * (1.0 - Abs(H_prime % 2 - 1.0));
 

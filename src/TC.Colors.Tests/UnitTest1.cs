@@ -1,43 +1,311 @@
-﻿using System;
+﻿#define HIGHLIGHT_ROUNDTRIP_DIFFERENCES
+
+using System;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TC.Colors;
+using static System.Math;
 
 namespace TC.Colors.Tests
 {
+
     [TestClass]
     public class ColorTests
     {
-        [TestMethod]
-        public void Verify_That_RGB_To_HSV_Roundtrips()
+
+        [StructLayout(LayoutKind.Explicit, Size = 3)]
+        private struct BitmapRGB
         {
-            for(byte r = 0; r < 255; r++)
-                for(byte g = 0; g < 255; g++)
-                    for(byte b = 0; b < 255; b++)
-                    {
-                        var rgb = new RGB(r, g, b);
-                        var hsv = rgb.ToHSV();
-                        var rgb2 = hsv.ToRGB();
+            [FieldOffset(0)]
+            public byte B;
+            [FieldOffset(1)]
+            public byte G;
+            [FieldOffset(2)]
+            public byte R;
 
-                        Assert.AreEqual(rgb, rgb2);
-
-                        break;
-                    }
+            public BitmapRGB(RGB other)
+            {
+                R = other.R;
+                G = other.G;
+                B = other.B;
+            }
         }
+
         [TestMethod]
-        public void Verify_That_RGB_To_HSL_Roundtrips()
+        public void GenerateHSVCharts()
         {
-            for(byte r = 0; r < 255; r++)
-                for(byte g = 0; g < 255; g++)
-                    for(byte b = 0; b < 255; b++)
+            var pixelFormat = PixelFormat.Format24bppRgb;
+
+            Directory.CreateDirectory("hsv");
+
+            for(var v = 0; v < 256; v++)
+            {
+                using(var bitmap = new Bitmap(360, 256, pixelFormat))
+                {
+                    var bits = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, pixelFormat);
+                    try
                     {
-                        var rgb = new RGB(r, g, b);
-                        var hsl = rgb.ToHSL();
-                        var rgb2 = hsl.ToRGB();
+                        unsafe
+                        {
+                            void* pData = bits.Scan0.ToPointer();
+                            byte* pRow = (byte*)pData;
 
-                        Assert.AreEqual(rgb, rgb2);
+                            for(var s = 0; s < 256; s++)
+                            {
+                                BitmapRGB* pCol = (BitmapRGB*)pRow;
 
-                        break;
+                                for(var h = 0; h < 360; h++)
+                                {
+                                    var hsv = new HSV((ushort)h, (byte)s, (byte)v);
+                                    var rgb = hsv.ToRGB();
+
+                                    pCol->R = rgb.R;
+                                    pCol->G = rgb.G;
+                                    pCol->B = rgb.B;
+
+                                    pCol++;
+                                }
+
+                                pRow += bits.Stride;
+                            }
+                        }
                     }
+                    finally
+                    {
+                        bitmap.UnlockBits(bits);
+                    }
+
+                    bitmap.Save($@"hsv\{v}.bmp", ImageFormat.Bmp);
+                }
+            }
         }
+
+        [TestMethod]
+        public void GenerateHSLCharts()
+        {
+            var pixelFormat = PixelFormat.Format24bppRgb;
+
+            Directory.CreateDirectory("hsl");
+
+            for(var l = 0; l < 256; l++)
+            {
+                using(var bitmap = new Bitmap(360, 256, pixelFormat))
+                {
+                    var bits = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, pixelFormat);
+                    try
+                    {
+                        unsafe
+                        {
+                            void* pData = bits.Scan0.ToPointer();
+                            byte* pRow = (byte*)pData;
+
+                            for(var s = 0; s < 256; s++)
+                            {
+                                BitmapRGB* pCol = (BitmapRGB*)pRow;
+
+                                for(var h = 0; h < 360; h++)
+                                {
+                                    var hsl = new HSL((ushort)h, (byte)s, (byte)l);
+                                    var rgb = hsl.ToRGB();
+
+                                    pCol->R = rgb.R;
+                                    pCol->G = rgb.G;
+                                    pCol->B = rgb.B;
+
+                                    pCol++;
+                                }
+
+                                pRow += bits.Stride;
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        bitmap.UnlockBits(bits);
+                    }
+
+                    bitmap.Save($@"hsl\{l}.bmp", ImageFormat.Bmp);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void GenerateHSVRoundtripCharts()
+        {
+            var pixelFormat = PixelFormat.Format24bppRgb;
+
+            Directory.CreateDirectory("rgb_to_hsv");
+
+            for(var b = 0; b < 256; b++)
+            {
+                using(var bitmap = new Bitmap(256, 256, pixelFormat))
+                {
+                    var bits = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, pixelFormat);
+                    try
+                    {
+                        unsafe
+                        {
+                            void* pData = bits.Scan0.ToPointer();
+                            byte* pRow = (byte*)pData;
+
+                            for(var g = 0; g < 256; g++)
+                            {
+                                BitmapRGB* pCol = (BitmapRGB*)pRow;
+
+                                for(var r = 0; r < 256; r++)
+                                {
+                                    var rgb1 = new RGB((byte)r, (byte)g, (byte)b);
+                                    var hsv = rgb1.ToHSV();
+                                    var rgb2 = hsv.ToRGB();
+
+                                    var rgb = new RGB();
+
+#if HIGHLIGHT_ROUNDTRIP_DIFFERENCES
+                                    rgb.R = (byte)(Abs(rgb1.R - rgb2.R) * 32);
+                                    rgb.G = (byte)(Abs(rgb1.G - rgb2.G) * 32);
+                                    rgb.B = (byte)(Abs(rgb1.B - rgb2.B) * 32);
+#else
+                                    rgb.R = (byte)Math.Abs(rgb1.R - rgb2.R);
+                                    rgb.G = (byte)Math.Abs(rgb1.G - rgb2.G);
+                                    rgb.B = (byte)Math.Abs(rgb1.B - rgb2.B);
+#endif
+
+                                    pCol->R = rgb.R;
+                                    pCol->G = rgb.G;
+                                    pCol->B = rgb.B;
+
+                                    pCol++;
+                                }
+
+                                pRow += bits.Stride;
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        bitmap.UnlockBits(bits);
+                    }
+
+                    bitmap.Save($@"rgb_to_hsv\{b}.bmp", ImageFormat.Bmp);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void GenerateHSLRoundtripCharts()
+        {
+            var pixelFormat = PixelFormat.Format24bppRgb;
+
+            Directory.CreateDirectory("rgb_to_hsl");
+
+            for(var b = 0; b < 256; b++)
+            {
+                using(var bitmap = new Bitmap(256, 256, pixelFormat))
+                {
+                    var bits = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, pixelFormat);
+                    try
+                    {
+                        unsafe
+                        {
+                            void* pData = bits.Scan0.ToPointer();
+                            byte* pRow = (byte*)pData;
+
+                            for(var g = 0; g < 256; g++)
+                            {
+                                BitmapRGB* pCol = (BitmapRGB*)pRow;
+
+                                for(var r = 0; r < 256; r++)
+                                {
+                                    if(r == 0 && g == 255 && b == 0)
+                                        Debugger.Break();
+
+                                    var rgb1 = new RGB((byte)r, (byte)g, (byte)b);
+                                    var hsl = rgb1.ToHSL();
+                                    var rgb2 = hsl.ToRGB();
+
+                                    var rgb = new RGB();
+
+#if HIGHLIGHT_ROUNDTRIP_DIFFERENCES
+                                    rgb.R = (byte)(Abs(rgb1.R - rgb2.R) * 32);
+                                    rgb.G = (byte)(Abs(rgb1.G - rgb2.G) * 32);
+                                    rgb.B = (byte)(Abs(rgb1.B - rgb2.B) * 32);
+#else
+                                    rgb.R = (byte)Math.Abs(rgb1.R - rgb2.R);
+                                    rgb.G = (byte)Math.Abs(rgb1.G - rgb2.G);
+                                    rgb.B = (byte)Math.Abs(rgb1.B - rgb2.B);
+#endif
+
+                                    pCol->R = rgb.R;
+                                    pCol->G = rgb.G;
+                                    pCol->B = rgb.B;
+
+                                    pCol++;
+                                }
+
+                                pRow += bits.Stride;
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        bitmap.UnlockBits(bits);
+                    }
+
+                    bitmap.Save($@"rgb_to_hsl\{b}.bmp", ImageFormat.Bmp);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void GenerateRGBReferenceCharts()
+        {
+            var pixelFormat = PixelFormat.Format24bppRgb;
+
+            Directory.CreateDirectory("rgb");
+
+            for(var b = 0; b < 256; b++)
+            {
+                using(var bitmap = new Bitmap(256, 256, pixelFormat))
+                {
+                    var bits = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, pixelFormat);
+                    try
+                    {
+                        unsafe
+                        {
+                            void* pData = bits.Scan0.ToPointer();
+                            byte* pRow = (byte*)pData;
+
+                            for(var g = 0; g < 256; g++)
+                            {
+                                BitmapRGB* pCol = (BitmapRGB*)pRow;
+
+                                for(var r = 0; r < 256; r++)
+                                {
+                                    pCol->R = (byte)r;
+                                    pCol->G = (byte)g;
+                                    pCol->B = (byte)b;
+
+                                    pCol++;
+                                }
+
+                                pRow += bits.Stride;
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        bitmap.UnlockBits(bits);
+                    }
+
+                    bitmap.Save($@"rgb\{b}.bmp", ImageFormat.Bmp);
+                }
+            }
+        }
+
     }
+
 }
