@@ -80,7 +80,7 @@ namespace TC.Colors
             else
                 H_prime = 0;
 
-            var H = (ushort)(60 * H_prime);
+            var H = (ushort)(60 * H_prime + 0.5);
 
             var mPlusM = M + m;
 
@@ -112,7 +112,7 @@ namespace TC.Colors
             else
                 H_prime = 0;
 
-            var H = (ushort)(60 * H_prime);
+            var H = (ushort)(60 * H_prime + 0.5);
 
             var V = M;
 

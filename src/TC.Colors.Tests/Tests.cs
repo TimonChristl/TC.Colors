@@ -158,16 +158,19 @@ namespace TC.Colors.Tests
 
                                 for(var r = 0; r < 256; r++)
                                 {
-                                    var rgb1 = new RGB((byte)r, (byte)g, (byte)b);
+                                    if(r == 255 && g == 4 && b == 0)
+                                        Debugger.Break();
+
+                                    var rgb1 = new RGB((byte)r, (byte)g, (byte)0);
                                     var hsv = rgb1.ToHSV();
                                     var rgb2 = hsv.ToRGB();
 
                                     var rgb = new RGB();
 
 #if HIGHLIGHT_ROUNDTRIP_DIFFERENCES
-                                    rgb.R = (byte)(Abs(rgb1.R - rgb2.R) * 32);
-                                    rgb.G = (byte)(Abs(rgb1.G - rgb2.G) * 32);
-                                    rgb.B = (byte)(Abs(rgb1.B - rgb2.B) * 32);
+                                    rgb.R = (byte)(Abs(rgb1.R - rgb2.R));
+                                    rgb.G = (byte)(Abs(rgb1.G - rgb2.G));
+                                    rgb.B = (byte)(Abs(rgb1.B - rgb2.B));
 #else
                                     rgb.R = (byte)Math.Abs(rgb1.R - rgb2.R);
                                     rgb.G = (byte)Math.Abs(rgb1.G - rgb2.G);
@@ -220,9 +223,6 @@ namespace TC.Colors.Tests
 
                                 for(var r = 0; r < 256; r++)
                                 {
-                                    if(r == 0 && g == 255 && b == 0)
-                                        Debugger.Break();
-
                                     var rgb1 = new RGB((byte)r, (byte)g, (byte)b);
                                     var hsl = rgb1.ToHSL();
                                     var rgb2 = hsl.ToRGB();
@@ -230,9 +230,9 @@ namespace TC.Colors.Tests
                                     var rgb = new RGB();
 
 #if HIGHLIGHT_ROUNDTRIP_DIFFERENCES
-                                    rgb.R = (byte)(Abs(rgb1.R - rgb2.R) * 32);
-                                    rgb.G = (byte)(Abs(rgb1.G - rgb2.G) * 32);
-                                    rgb.B = (byte)(Abs(rgb1.B - rgb2.B) * 32);
+                                    rgb.R = (byte)(Abs(rgb1.R - rgb2.R));
+                                    rgb.G = (byte)(Abs(rgb1.G - rgb2.G));
+                                    rgb.B = (byte)(Abs(rgb1.B - rgb2.B));
 #else
                                     rgb.R = (byte)Math.Abs(rgb1.R - rgb2.R);
                                     rgb.G = (byte)Math.Abs(rgb1.G - rgb2.G);
