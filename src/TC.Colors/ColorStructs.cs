@@ -8,13 +8,33 @@ using static System.Math;
 namespace TC.Colors
 {
 
+    /// <summary>
+    /// Represents a color in the red/green/blue model.
+    /// </summary>
     public struct RGB : IEquatable<RGB>
     {
 
+        /// <summary>
+        /// The red component of the color, from 0 to 255.
+        /// </summary>
         public byte R;
+
+        /// <summary>
+        /// The green component of the color, from 0 to 255.
+        /// </summary>
         public byte G;
+
+        /// <summary>
+        /// The blue component of the color, from 0 to 255.
+        /// </summary>
         public byte B;
 
+        /// <summary>
+        /// Initializes the <see cref="RGB"/> struct with the given values for red, green and blue.
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
         public RGB(byte r, byte g, byte b)
         {
             R = r;
@@ -22,6 +42,7 @@ namespace TC.Colors
             B = b;
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             if(obj is RGB)
@@ -30,26 +51,41 @@ namespace TC.Colors
             return false;
         }
 
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             return R << 16 | G << 8 | B << 0;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"RGB({R}, {G}, {B}";
         }
 
+        /// <inheritdoc/>
         public bool Equals(RGB other)
         {
             return EqualsCore(this, other);
         }
 
+        /// <summary>
+        /// Returns <c>true</c> if the two colors are equal, <c>false</c> otherwise.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static bool operator ==(RGB a, RGB b)
         {
             return EqualsCore(a, b);
         }
 
+        /// <summary>
+        /// Returns <c>true</c> if the two colors are not equal, <c>false</c> otherwise.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static bool operator !=(RGB a, RGB b)
         {
             return !EqualsCore(a, b);
@@ -62,6 +98,10 @@ namespace TC.Colors
                 && a.B == b.B;
         }
 
+        /// <summary>
+        /// Converts this color to a <see cref="HSL"/> struct.
+        /// </summary>
+        /// <returns></returns>
         public HSL ToHSL()
         {
             var M = Max(R, Max(G, B));
@@ -94,6 +134,10 @@ namespace TC.Colors
             return new HSL(H, (byte)S_hsl, L);
         }
 
+        /// <summary>
+        /// Converts this color to a <see cref="HSV"/> struct.
+        /// </summary>
+        /// <returns></returns>
         public HSV ToHSV()
         {
             var M = Max(R, Max(G, B));
@@ -125,13 +169,34 @@ namespace TC.Colors
 
     }
 
+    /// <summary>
+    /// Represents a color in the hue/saturation/lightness model.
+    /// </summary>
     public struct HSL : IEquatable<HSL>
     {
 
+        /// <summary>
+        /// The hue of the color, from 0 to 360.
+        /// </summary>
         public ushort H;
+
+        /// <summary>
+        /// The saturation of the color, from 0 to 255.
+        /// </summary>
         public byte S;
+
+        /// <summary>
+        /// The lightness of the color, from 0 to 255.
+        /// </summary>
         public byte L;
 
+        /// <summary>
+        /// Initializes the <see cref="HSL"/> struct with the given values for hue, saturation and lightness.
+        /// </summary>
+        /// <param name="h"></param>
+        /// <param name="s"></param>
+        /// <param name="l"></param>
+        /// <exception cref="ArgumentException">if the hue is greater than 360</exception>
         public HSL(ushort h, byte s, byte l)
         {
             if(h > 360)
@@ -142,6 +207,7 @@ namespace TC.Colors
             L = l;
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             if(obj is HSL)
@@ -150,26 +216,41 @@ namespace TC.Colors
             return false;
         }
 
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             return H << 16 | S << 8 | L << 0;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"HSL({H}, {S}, {L}";
         }
 
+        /// <inheritdoc/>
         public bool Equals(HSL other)
         {
             return EqualsCore(this, other);
         }
 
+        /// <summary>
+        /// Returns <c>true</c> if the two colors are equal, <c>false</c> otherwise.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static bool operator ==(HSL a, HSL b)
         {
             return EqualsCore(a, b);
         }
 
+        /// <summary>
+        /// Returns <c>true</c> if the two colors are not equal, <c>false</c> otherwise.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static bool operator !=(HSL a, HSL b)
         {
             return !EqualsCore(a, b);
@@ -182,6 +263,10 @@ namespace TC.Colors
                 && a.L == b.L;
         }
 
+        /// <summary>
+        /// Converts this color to a <see cref="RGB"/> struct.
+        /// </summary>
+        /// <returns></returns>
         public RGB ToRGB()
         {
             var C = (255 - Abs(2 * L - 255)) * S / 255;
@@ -211,13 +296,34 @@ namespace TC.Colors
 
     }
 
+    /// <summary>
+    /// Represents a color in the hue/saturation/value model.
+    /// </summary>
     public struct HSV : IEquatable<HSV>
     {
 
+        /// <summary>
+        /// The hue of the color, from 0 to 360.
+        /// </summary>
         public ushort H;
+
+        /// <summary>
+        /// The saturation of the color, from 0 to 255.
+        /// </summary>
         public byte S;
+
+        /// <summary>
+        /// The value of the color, from 0 to 255.
+        /// </summary>
         public byte V;
 
+        /// <summary>
+        /// Initializes the <see cref="HSV"/> struct with the given values for hue, saturation and value.
+        /// </summary>
+        /// <param name="h"></param>
+        /// <param name="s"></param>
+        /// <param name="v"></param>
+        /// <exception cref="ArgumentException">if the hue is greater than 360</exception>
         public HSV(ushort h, byte s, byte v)
         {
             if(h > 360)
@@ -228,6 +334,7 @@ namespace TC.Colors
             V = v;
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             if(obj is HSV)
@@ -236,26 +343,41 @@ namespace TC.Colors
             return false;
         }
 
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             return H << 16 | S << 8 | V << 0;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"HSV({H}, {S}, {V}";
         }
 
+        /// <inheritdoc/>
         public bool Equals(HSV other)
         {
             return EqualsCore(this, other);
         }
 
+        /// <summary>
+        /// Returns <c>true</c> if the two colors are equal, <c>false</c> otherwise.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static bool operator ==(HSV a, HSV b)
         {
             return EqualsCore(a, b);
         }
 
+        /// <summary>
+        /// Returns <c>true</c> if the two colors are not equal, <c>false</c> otherwise.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static bool operator !=(HSV a, HSV b)
         {
             return !EqualsCore(a, b);
@@ -268,6 +390,10 @@ namespace TC.Colors
                 && a.V == b.V;
         }
 
+        /// <summary>
+        /// Converts this color to a <see cref="RGB"/> struct.
+        /// </summary>
+        /// <returns></returns>
         public RGB ToRGB()
         {
             var C = V * S / 255;
