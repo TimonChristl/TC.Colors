@@ -306,6 +306,35 @@ namespace TC.Colors.Tests
             }
         }
 
+        [TestMethod]
+        public void PaletteTest1()
+        {
+            var palette = new ColorPalette();
+            palette.Add(0.0f, new RGB(255, 0, 0));
+            palette.Add(1.0f, new RGB(0, 255, 0));
+
+            // Before first stop
+            Assert.AreEqual(new RGB(255, 0, 0), palette.Get(-1.0f));
+
+            // At first stop
+            Assert.AreEqual(new RGB(255, 0, 0), palette.Get(0.0f));
+
+            // 25% between the two stops
+            Assert.AreEqual(new RGB(191, 63, 0), palette.Get(0.25f));
+
+            // 50% between the two stops
+            Assert.AreEqual(new RGB(127, 127, 0), palette.Get(0.5f));
+
+            // 75% between the two stops
+            Assert.AreEqual(new RGB(63, 191, 0), palette.Get(0.75f));
+
+            // At last stop
+            Assert.AreEqual(new RGB(0, 255, 0), palette.Get(1.0f));
+
+            // After last stop
+            Assert.AreEqual(new RGB(0, 255, 0), palette.Get(2.0f));
+        }
+
     }
 
 }
