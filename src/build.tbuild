@@ -11,8 +11,9 @@
     <Steps>
         <fs:DeleteFiles Directory="${TBuild.ScriptDir}" Pattern="*.nupkg"/>
         <msbuild:MsBuild ProjectFile="${TBuild.ScriptDir}\TC.Colors.sln" Configuration="Release" Platform="Any CPU" Targets="Build"/>
-        <fs:CopyFiles SourceDirectory="${TBuild.ScriptDir}\TC.Colors\bin\Release\" DestDirectory="${TBuild.ScriptDir}">
-          <Include Pattern="*.nupkg">
+        <fs:CopyFiles SourceDirectory="${TBuild.ScriptDir}\TC.Colors\bin\Release\" DestDirectory="${TBuild.ScriptDir}" Recursive="false">
+          <fs:Exclude Pattern="*"/>
+          <fs:Include Pattern="*.nupkg"/>
         </fs:CopyFiles>
     </Steps>
 </Script>
