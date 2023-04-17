@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.421
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TC.Colors", "TC.Colors\TC.Colors.csproj", "{AD2C4565-77BE-4CD7-B572-B73D1CFD8FA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TC.Colors", "TC.Colors\TC.Colors.csproj", "{AD2C4565-77BE-4CD7-B572-B73D1CFD8FA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TC.Colors.Tests", "TC.Colors.Tests\TC.Colors.Tests.csproj", "{7F9BA7AF-E783-4C00-99C1-844CC80ADD87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TC.Colors.Tests2", "TC.Colors.Tests2\TC.Colors.Tests2.csproj", "{B0F608C2-D8A3-4D9D-ABBA-42162352F0D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{AD2C4565-77BE-4CD7-B572-B73D1CFD8FA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD2C4565-77BE-4CD7-B572-B73D1CFD8FA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD2C4565-77BE-4CD7-B572-B73D1CFD8FA2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7F9BA7AF-E783-4C00-99C1-844CC80ADD87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F9BA7AF-E783-4C00-99C1-844CC80ADD87}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7F9BA7AF-E783-4C00-99C1-844CC80ADD87}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7F9BA7AF-E783-4C00-99C1-844CC80ADD87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0F608C2-D8A3-4D9D-ABBA-42162352F0D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0F608C2-D8A3-4D9D-ABBA-42162352F0D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0F608C2-D8A3-4D9D-ABBA-42162352F0D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0F608C2-D8A3-4D9D-ABBA-42162352F0D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

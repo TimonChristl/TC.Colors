@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TC.Colors;
 using static System.Math;
 
-namespace TC.Colors.Tests
+namespace TC.Colors.Tests2
 {
 
     [TestClass]
