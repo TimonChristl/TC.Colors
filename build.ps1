@@ -33,7 +33,7 @@ try {
     dotnet pack /p:Configuration=Release /p:Version=$FULL_VERSION /p:PackageVersion=$VERSION
     if(!$?) { exit 1 }
 
-    dotnet nuget push --source $NUGET_SOURCE --api-key=$GITEA_API_KEY "TC.Colors\bin\Release\TC.Colors.$FULL_VERSION.nupkg"
+    dotnet nuget push --source $NUGET_SOURCE --api-key=$GITEA_API_KEY "TC.Colors\bin\Release\TC.Colors.$VERSION.nupkg"
     if(!$?) { exit 1 }
 }
 finally
